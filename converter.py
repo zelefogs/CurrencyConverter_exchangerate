@@ -31,10 +31,10 @@ def get_available(d_cur):
 		print(k, *v.values())
 
 
-def convert_currency(val_from_to: str, need_prnt=False):
+def convert_currency(val_from_to: str, need_print=False):
 	"""
 	:param val_from_to: example: "1 USD to EUR"
-	:param need_prnt: func print string if True
+	:param need_print: func print string if True
 	:return: converted number (float)
 	"""
 	pattern = r'[\d]*\.?\d* \w* to \w*'
@@ -59,12 +59,12 @@ def convert_currency(val_from_to: str, need_prnt=False):
 	return 'Invalid input'
 
 
-def historical_rates(currency: str, date: str, need_prnt=False):
+def historical_rates(currency: str, date: str, need_print=False):
 	"""
 	A function that returns how much the euro cost in currency on a historical date
-	:param currency: for example USD
-	:param date: for example 20-13-1999
-	:param need_prnt: func print string if True
+	:param currency: "USD"
+	:param date: "20-13-1999"
+	:param need_print: func print string if True
 	:return: currency to euro ratio
 	"""
 	if currency in available_currencies()['symbols']:
@@ -74,7 +74,7 @@ def historical_rates(currency: str, date: str, need_prnt=False):
 		data = validate_request(url, params)
 		if data[0]:
 			rates = data[1]['rates']
-			if need_prnt:
+			if need_print:
 				print(f'{date} 1 EUR cost {round(list(rates.items())[0][1], 2)} {list(rates.items())[0][0]}')
 			return rates.get(currency)
 
@@ -101,13 +101,13 @@ def time_series_data(start_date: str, end_date: str, currency: str, base="EUR"):
 		return data[1]['rates'], currency, base
 
 
-def view_graph(dict_rates, currency, base):
+def view_graph(dict_rates, currency, base="EUR"):
 	"""
 	Function draws a graph using matplotlib axis x - date, axis y - currency rate to base
 	Parameters can be passed like this *time_series_data('30-05-2021', '30-05-2022', 'USD', 'EUR')
-	:param dict_rates:
-	:param currency:
-	:param base:
+	:param dict_rates: the result of the function "time_series_data"
+	:param currency: "USD"
+	:param base: "EUR"
 	:return:
 	"""
 	xdata = [datetime.datetime.strptime(item, '%Y-%m-%d') for item in dict_rates.keys()]
@@ -132,8 +132,8 @@ def validate_request(url, params=None):
 		if data['success']:
 			return True, data
 
-
-#view_graph(*time_series_data('30-05-2021', '30-05-2022', 'RUB', 'USD'))
-# print(convert_currency("200 USD to RUB", True))
-# print(historical_rates('RUB','30-05-2010', False))
-# print(get_available(available_currencies()))
+if __name__ == '__main__':
+	get_available(available_currencies())
+	convert_currency("1 USD to RUB", need_print=True)
+	historical_rates('EGP', '20-11-2005', need_print=True)
+	view_graph(*time_series_data("20-12-2007", "20-12-2009", "RUB", "USD"))
